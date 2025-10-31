@@ -20,15 +20,36 @@ let list = [
   "Chaque ete nous visitons le village de nos grands parents pour passer du temps en famille et raconter de vieilles histoires, jouer avec les enfants et aider dans le jardin ou dans la cuisine pour apprendre de nouvelles choses tout en s amusant ensemble avec joie et bonheur."
 ];
 
+let reult =document.querySelector("#result-container");
+reult.classList.add("hidden-result-box");
+reult.classList.remove("n-result-box");
 
-let dandindex = Math.floor(Math.random() * list.length);
-let chalenge = list[dandindex];
 
+let tapCar=0;
+let dandindex;
+let chalenge="";
 let f = [];
-for (let i = 0; i < chalenge.length; i++) {
-    f.push(`<span>${chalenge[i]}</span>`);
+
+//3adad ar9am mn bach n7sab acc
+let numberWord;
+
+
+let spans = document.querySelectorAll('#txt span');
+
+function randChalenge(){
+   dandindex = Math.floor(Math.random() * list.length);
+   chalenge = list[dandindex];
+   f = [];
+   for (let i = 0; i < chalenge.length; i++) {
+       f.push(`<span>${chalenge[i]}</span>`);
+   }
+   document.getElementById("txt").innerHTML = f.join("");
+   
+   spans = document.querySelectorAll('#txt span');
 }
-document.getElementById("txt").innerHTML = f.join("");
+
+
+
 //function time
 let  divTime=document.querySelector("#time");
 divTime.classList.add('timeBlock');
@@ -48,54 +69,61 @@ let acc=0;
 let devAcc=document.getElementById("acc");
 devAcc.textContent=Math.floor(acc)+"%";
 
+let endTime ;
+
 
 function hendelClickP(e){
+     randChalenge();
+     numberWord=(chalenge.length)/5;
+     tapCar=0;
+     reult.classList.remove("n-result-box");
+     reInitial()
 
+     reult.classList.add("hidden-result-box");
+
+     clearInterval(endTime);
+    time=parseInt(e.lastChild.textContent)*1000;
+     timing=time/1000;
      document.querySelector('#scnd').textContent=timing;
-     let endTime =setInterval(()=>{
+
+     endTime =setInterval(()=>{
+        timing--;
       document.querySelector('#scnd').textContent=timing;
       if(timing==0){
         clearInterval(endTime);
-         alert('you lose');  // <------- hna fin wsalt
+        hendelEndPlay(); // <------- hna fin wsalt
       }
-      timing--;
+      
      },1000)
 
      divTime.classList.remove('timeBlock');
      divTime.classList.add('timeNone');
 
-     time=parseInt(e.lastChild.textContent)*1000;
-     timing=time/1000;
-
     if(time==60){
-     document.querySelector("#totatWpm").textContent="/ "+(Math.floor(numberWord));
+     document.querySelector("#totatWpm").textContent="/"+(Math.floor(numberWord));
     }else if(time==30){
          document.querySelector("#totatWpm").textContent="/ "+(Math.floor(numberWord))*2;
          
     }else{
          document.querySelector("#totatWpm").textContent="/ "+(Math.floor(numberWord))*4;
     }
-
-
+ 
 }
 
-    
-//3adad ar9am mn bach n7sab acc
-let numberWord=(chalenge.length)/5;
 let index = -1;
 
-let spans = document.querySelectorAll('span');
+
 let cmp=0;
 window.addEventListener('keydown', (e) => {
+        tapCar++;
        //acc
        if(errorNumbers<=chalenge.length){
-            acc=((chalenge.length-errorNumbers)*100)/chalenge.length;
-            devAcc.textContent=Math.floor(acc) +"%";
-
+              acc=((chalenge.length-errorNumbers)*100)/chalenge.length;
+              devAcc.textContent=Math.floor(acc) +"%";
            }else{
-            devAcc.textContent=0;
+              devAcc.textContent=0;
            }
-   
+
        document.querySelector('.typing-game').focus();
 
        if(e.key =="Shift" || e.key=="ArrowDown" || e.key=="ArrowUp" || e.key=="ArrowLeft" || e.key=="ArrowRight"){
@@ -109,7 +137,7 @@ window.addEventListener('keydown', (e) => {
            index++;
            cmp++;
           //ila kan l7arf s7i7
-           if (chalenge[index] === e.key) {
+        if (chalenge[index] === e.key) {
                spans[index].classList.add('correct');
                 if(cmp==5){
                 if(time==60){
@@ -122,7 +150,7 @@ window.addEventListener('keydown', (e) => {
                devWPM.textContent=wpm;
                 cmp=0; 
            }
-           } else {
+        } else {
                spans[index].classList.add('wrong');
                errorNumbers++;
                document.querySelector('#error').textContent=errorNumbers;
@@ -133,12 +161,73 @@ window.addEventListener('keydown', (e) => {
 
            if(index==chalenge.length-1){
                clearInterval(endTime);
-               alert("you wine"); // <-----hna fin wsalt
+               
            }
        }
    });
 
 
+function hendelRePlay(){
+
+       reInitial();
+       ReTiming();
+        
+         
+}
 
 
+function hendelNewPlay(){
+        divTime.classList.add('timeBlock');
+        reult.classList.add("hidden-result-box");
+reult.classList.remove("n-result-box");
+}
+
+function ReTiming(){
+      clearInterval(endTime);
+         timing=time/1000;
+         document.querySelector('#scnd').textContent=timing;
+    
+         endTime =setInterval(()=>{
+            timing--;
+          document.querySelector('#scnd').textContent=timing;
+          if(timing==0){
+            clearInterval(endTime);
+             hendelEndPlay();  // <------- hna fin wsalt
+          }
+          
+         },1000)
+}
+
+function reInitial(){
+      tapCar=0;
+        index=-1;
+        acc=0;
+        devAcc.textContent=Math.floor(acc)+"%";
+        
+        wpm =0;
+        devWPM.textContent=wpm;
+
+        errorNumbers=0;
+        document.querySelector('#error').textContent=errorNumbers;
+        document.querySelector("#error").classList.remove('errors');
+
+        document.querySelector('.typing-game').value="";
+        
+        spans.forEach(elm=>{
+                elm.classList.remove('correct');
+                elm.classList.remove('wrong');
+        });
+}
+
+function hendelEndPlay(){
+      clearInterval(endTime);
+       document.querySelector("#typedChars").textContent=tapCar;
+       document.querySelector("#errorsR").textContent=errorNumbers;
+       document.querySelector("#wpmR").textContent=wpm;
+       document.querySelector("#chosenTime").textContent=time/1000;
+       document.querySelector("#lastTime").textContent=timing;
+       document.querySelector("#accuracy").textContent=Math.floor(acc) +"%";
+       reult.classList.add("n-result-box");
+       reult.classList.remove("hidden-result-box");
+}
 

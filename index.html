@@ -25,14 +25,37 @@
     <div id="txt"></div>
     <div class="container">
         <textarea  name="" class="typing-game" autofocus  id=""  max="100%" ></textarea>
+    </div>
+
+      <nav>
         <div class="controle">
             <div class="time">Time: <span id="scnd"></span> </div>
             <div>Errors : <span id="error"></span></div>
             <div>WPM : <span id="wpm"></span> <span id="totatWpm"></span> </div>
             <div class="score">acc : <span id="acc"></span></div>
         </div>
-        <div class="finish"></div>
-    </div>
+    </nav>
+     <div class="finish">
+             <button onclick="hendelRePlay()">Re-Play</button>
+             <button onclick="hendelNewPlay()">New Chalenge</button>
+             <button onclick="hendelEndPlay()">Ed-Paly</button>
+     </div>
+
+     <div id="result-container">
+
+        <div class="result-box">
+             <img src="./image/Cheers Wine GIF by Visit California.gif" alt="win-lose">
+          <h2>Résultat de la partie </h2>
+          <p><strong>Caractères tapés :</strong> <span id="typedChars"></span></p>
+          <p><strong>Erreurs :</strong> <span id="errorsR"></span></p>
+          <p><strong>WPM :</strong> <span id="wpmR"></span></p>
+          <p><strong>Temps choisi :</strong> <span id="chosenTime"></span> sec</p>
+          <p><strong>Temps écoulé :</strong> <span id="lastTime"></span> sec</p>
+          <p><strong>Précision :</strong> <span id="accuracy"></span></p>
+          <div class="finish"></div><button onclick="hendelNewPlay()">New Chalenge</button></div>
+        </div>
+
+     </div>
 
 </body>
 </html>
