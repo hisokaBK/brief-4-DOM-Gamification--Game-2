@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+
+    <script src="./index.js" defer></script>
+</head>
+<body> 
+        <div id="time">
+             <div>
+                <p>Choisis le moment idéal pour te challenger.</p>
+               <div onclick="hendelClickP(this)" ><p>Commence en douceur</p><p class="p1">60s</p></div>
+               <div onclick="hendelClickP(this)"><p>Le vrai défi commence</p><p  class="p1">30s</p></div>
+               <div onclick="hendelClickP(this)"><p>Seuls les meilleurs réussissent</p><p  class="p1">15s</p></div>
+               
+             </div>
+        </div>
+    <div id="txt"></div>
+    <div class="container">
+        <textarea  name="" class="typing-game" autofocus  id=""  max="100%" ></textarea>
+        <div class="controle">
+            <div class="time">Time: <span id="scnd"></span> </div>
+            <div>Errors : <span id="error"></span></div>
+            <div>WPM : <span id="wpm"></span> <span id="totatWpm"></span> </div>
+            <div class="score">acc : <span id="acc"></span></div>
+        </div>
+        <div class="finish"></div>
+    </div>
+
+</body>
+</html>
