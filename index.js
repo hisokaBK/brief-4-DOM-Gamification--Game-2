@@ -50,21 +50,16 @@ devAcc.textContent=Math.floor(acc)+"%";
 
 
 function hendelClickP(e){
-     
-    
 
      document.querySelector('#scnd').textContent=timing;
-
      let endTime =setInterval(()=>{
-      //  if(cons){
-      //     //affech resolt
-      //  }
       document.querySelector('#scnd').textContent=timing;
       if(timing==0){
-         clearInterval(endTime);
+        clearInterval(endTime);
+         alert('you lose');  // <------- hna fin wsalt
       }
       timing--;
-   },1000)
+     },1000)
 
      divTime.classList.remove('timeBlock');
      divTime.classList.add('timeNone');
@@ -72,27 +67,21 @@ function hendelClickP(e){
      time=parseInt(e.lastChild.textContent)*1000;
      timing=time/1000;
 
-     if(time==60){
+    if(time==60){
      document.querySelector("#totatWpm").textContent="/ "+(Math.floor(numberWord));
-}else if(time==30){
-     document.querySelector("#totatWpm").textContent="/ "+(Math.floor(numberWord))*2;
-     
-}else{
-     document.querySelector("#totatWpm").textContent="/ "+(Math.floor(numberWord))*4;
-     
-}
-}
+    }else if(time==30){
+         document.querySelector("#totatWpm").textContent="/ "+(Math.floor(numberWord))*2;
+         
+    }else{
+         document.querySelector("#totatWpm").textContent="/ "+(Math.floor(numberWord))*4;
+    }
 
+
+}
 
     
 //3adad ar9am mn bach n7sab acc
 let numberWord=(chalenge.length)/5;
-
-
-setTimeout(()=>{
-      
-},time);
-
 let index = -1;
 
 let spans = document.querySelectorAll('span');
@@ -140,6 +129,11 @@ window.addEventListener('keydown', (e) => {
                document.querySelector("#error").classList.add('errors');
                 cmp=0; //hna <----------
 
+           }
+
+           if(index==chalenge.length-1){
+               clearInterval(endTime);
+               alert("you wine"); // <-----hna fin wsalt
            }
        }
    });
