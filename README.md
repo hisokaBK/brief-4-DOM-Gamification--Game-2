@@ -39,4 +39,3 @@ Taper un texte affiché en temps limité et obtenir un score en mots par minute 
 1. Cloner le projet :
    ```bash
    git clone https://github.com/your-username/typing-speed-game.git
-   cd typing-speed-game
