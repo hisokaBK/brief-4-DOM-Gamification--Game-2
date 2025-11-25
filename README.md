@@ -1,9 +1,3 @@
-
----
-
-## ⌨️ README.md – Typing Speed Game
-
-```markdown
 # ⌨️ Typing Speed Game
 
 Un jeu de vitesse de frappe où l’utilisateur doit taper le texte affiché le plus rapidement et précisément possible.  
