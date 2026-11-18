@@ -21,7 +21,11 @@
         <span>hisoka<span>type</span><small> / typing arena</small></span>
       </a>
       <div class="header-right">
-        <span class="header-label"><span class="online-dot"></span>Train your typing</span>
+        <div class="sound-controls" role="group" aria-label="Audio settings">
+          <button type="button" id="keys-sound-toggle" class="sound-toggle" data-sound-toggle="keys" aria-pressed="true" title="Toggle typing sounds">⌨ <span>Keys On</span></button>
+          <button type="button" id="ui-sound-toggle" class="sound-toggle" data-sound-toggle="ui" aria-pressed="true" title="Toggle button sounds">◉ <span>UI On</span></button>
+          <button type="button" id="music-sound-toggle" class="sound-toggle" data-sound-toggle="music" aria-pressed="true" title="Toggle background game music">♫ <span>Music On</span></button>
+        </div>
         <button id="home-button" class="icon-button" type="button" aria-label="Return to game modes" title="Game modes" hidden>⌂ <span>Modes</span></button>
       </div>
     </header>
