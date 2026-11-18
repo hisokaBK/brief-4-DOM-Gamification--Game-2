@@ -213,7 +213,6 @@ const sound = (() => {
     const ctx = audioContext();
     if (!ctx) return;
     musicBus=ctx.createGain();
-    musicBus.context=ctx;
     musicBus.gain.setValueAtTime(.65,ctx.currentTime);
     musicBus.connect(ctx.destination);
     musicNote();
