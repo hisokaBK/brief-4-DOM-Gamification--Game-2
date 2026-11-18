@@ -26,7 +26,7 @@ Choose **English** or **Français** before playing. All sample texts are include
 - Restart current test, choose a new passage, switch modes, or manually finish without disruptive browser dialogs.
 - Pasting and dropping text into the typing field are blocked during tests.
 - **Lowercase prompts:** Time Attack and Quote Challenge display practice texts entirely in lowercase, including the first letter. Uppercase typed by mobile keyboards is treated as the matching lowercase character, so autocapitalization doesn't create a false mistake.
-- **Three independent sound controls** in the header: `Keys` for soft keypress/correction sounds, `UI` for button clicks, and `Music` for an original, subtle ambient loop while a test is open. Each can be muted separately, even on mobile.
+- **Three independent sound controls** in the header: `Keys` for soft keypress/correction sounds, `UI` for button clicks, and `Music` for an original, quiet **piano-style melody** while a test is open, with a soft attack, decaying notes, and low volume. Each can be muted separately, even on mobile.
 - Audio preferences persist in `localStorage`; background music stops on the results/setup screens, when the page is hidden, and when leaving the page. Music and effects are generated locally using the Web Audio API and require a user interaction to unlock playback.
 - No new image or audio dependencies. The old GIF remains in the repository but is not loaded by the redesigned site.
 
