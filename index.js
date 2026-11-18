@@ -187,9 +187,9 @@ const sound = (() => {
       btn.classList.toggle("is-active",on);
       const label=channel==="keys"?"Keys":channel==="ui"?"UI":"Music";
       const icon=channel==="keys"?"⌨":channel==="ui"?"◉":"♫";
-      btn.replaceChildren();
-      btn.textContent=icon+" "+label+" "+(on?"On":"Off");
+      btn.innerHTML='<span class="sound-symbol" aria-hidden="true">'+icon+'</span><span class="sound-label">'+label+" "+(on?"On":"Off")+"</span>";
       btn.title=(on?"Mute ":"Enable ")+(channel==="keys"?"typing sounds":channel==="ui"?"button sounds":"background music");
+      btn.setAttribute("aria-label",btn.title);
     }
   }
   for (const [channel,btn] of Object.entries(buttons)) {
