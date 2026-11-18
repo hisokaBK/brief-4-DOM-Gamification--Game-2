@@ -96,7 +96,7 @@ const game={
   mode:MODES[settings.mode]?settings.mode:"time",
   duration:[15,30,60,120].includes(Number(settings.duration))?Number(settings.duration):30,
   language:["en","fr"].includes(settings.language)?settings.language:"en",
-  phase:"setup",prompt:"",lastPrompt:"",startAt:0,elapsed:0,ticker:null,
+  phase:"setup",prompt:"",lastPrompt:"",startAt:null,elapsed:0,ticker:null,
   value:"",correct:0,incorrect:0,keystrokes:0,mistyped:0,spans:[],lastDisplayed:"",
   screen:"setup",finished:false
 };
@@ -165,7 +165,7 @@ function stopClock(){
   game.ticker=null;
 }
 function secondsElapsed() {
-  return game.startAt ? Math.max(0,(performance.now()-game.startAt)/1000) : 0;
+  return game.startAt !== null ? Math.max(0,(performance.now()-game.startAt)/1000) : 0;
 }
 function startClock() {
   if(game.phase!=="ready")return;
@@ -261,7 +261,7 @@ function refreshPrompt(oldText,newText){
 }
 function resetRound(newText=true) {
   stopClock();
-  game.phase="ready";game.startAt=0;game.elapsed=0;
+  game.phase="ready";game.startAt=null;game.elapsed=0;
   game.value="";game.correct=game.incorrect=game.keystrokes=game.mistyped=0;
   els.input.disabled=false;
   els.input.value="";
@@ -412,7 +412,7 @@ function renderHistory() {
   }
 }
 function goHome(){
-  stopClock();game.phase="setup";game.startAt=0;game.elapsed=0;
+  stopClock();game.phase="setup";game.startAt=null;game.elapsed=0;
   els.input.blur();
   selectSettings();showScreen("setup");
 }
