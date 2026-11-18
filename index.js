@@ -314,15 +314,18 @@ function finishRound(reason) {
     wpm:m.wpm,raw:m.raw,accuracy:m.accuracy,errors:m.errors,
     mistyped:game.mistyped,correct:m.correct,chars:m.size,elapsed:Math.round(m.elapsed*10)/10,
     completed:reason==="completed"||reason==="timeout",
+    eligible:(game.mode==="time"&&(reason==="timeout"||reason==="completed")) ||
+      (game.mode==="quote"&&reason==="completed"&&m.elapsed>=3) ||
+      (game.mode==="zen"&&m.elapsed>=30&&m.size>=40),
     at:new Date().toISOString()
   };
   const scores=readJSON(STORAGE,[]);
   const history=Array.isArray(scores)?scores.filter(item=>item&&item.mode):[];
-  const previous=history.filter(s=>s.mode===record.mode && s.language===record.language &&
-    s.duration===record.duration);
+  const previous=history.filter(s=>s.eligible===true && s.mode===record.mode &&
+    s.language===record.language && s.duration===record.duration);
   const bestBefore=previous.reduce((max,s)=>Math.max(max,Number(s.wpm)||0),0);
   const personalBest=Math.max(bestBefore,record.wpm);
-  const newBest=record.wpm>bestBefore && record.chars>=5;
+  const newBest=record.eligible && record.wpm>bestBefore && record.chars>=5;
   history.unshift(record);
   safeSet(STORAGE,JSON.stringify(history.slice(0,25)));
   els.resultWpm.textContent=String(record.wpm);
@@ -333,9 +336,10 @@ function finishRound(reason) {
   els.resultErrors.textContent=String(record.mistyped);
   els.resultDuration.textContent=record.elapsed.toFixed(1)+"s";
   els.resultCorrect.textContent=String(record.correct);
-  els.resultBest.textContent=personalBest+" WPM";
+  els.resultBest.textContent=personalBest>0?personalBest+" WPM":"—";
   els.resultRecord.textContent=newBest?"★ New personal best for this mode!":
-    "Every session is progress. Keep building your rhythm.";
+    record.eligible?"Every session is progress. Keep building your rhythm.":
+    "For a personal best, finish a full challenge or practice Zen for at least 30 seconds.";
   const stateLabel=reason==="timeout"?"Time is up!":
     reason==="completed"?"Challenge completed!":"Practice complete.";
   els.resultSummary.textContent=stateLabel+" "+MODES[game.mode].name+" · "+
