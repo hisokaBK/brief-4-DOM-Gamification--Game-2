@@ -4,7 +4,7 @@
 const $ = id => document.getElementById(id);
 const els = {
   setup:$("setup-screen"),play:$("play-screen"),results:$("results-screen"),
-  home:$("home-button"),modes:[...document.querySelectorAll("[data-mode]")],
+  home:$("home-button"),soundKeys:$("keys-sound-toggle"),soundUI:$("ui-sound-toggle"),soundMusic:$("music-sound-toggle"),modes:[...document.querySelectorAll("[data-mode]")],
   durations:[...document.querySelectorAll("[data-duration]")],
   languages:[...document.querySelectorAll("[data-language]")],
   timeConfig:$("time-config"),start:$("start-button"),history:$("history-container"),
@@ -28,6 +28,7 @@ const els = {
 };
 const STORAGE = "hisokatype-results-v1";
 const SETTINGS = "hisokatype-settings-v1";
+const AUDIO_SETTINGS = "hisokatype-audio-v1";
 const MODES = {
   time:{name:"Time Attack",heading:"Race the clock.",hint:"Type the highlighted text as quickly and accurately as you can.",tag:"TIME ATTACK"},
   quote:{name:"Quote Challenge",heading:"Every word counts.",hint:"Finish the entire passage. Fix highlighted mistakes to complete the challenge.",tag:"QUOTE CHALLENGE"},
@@ -101,6 +102,119 @@ const game={
   screen:"setup",finished:false
 };
 
+
+// Independent, original synthesized sounds; no hosted audio, MP3s or dependencies.
+const sound = (() => {
+  const saved = readJSON(AUDIO_SETTINGS,{keys:true,ui:true,music:true});
+  const enabled = {
+    keys:saved.keys !== false,
+    ui:saved.ui !== false,
+    music:saved.music !== false
+  };
+  const buttons = {keys:els.soundKeys,ui:els.soundUI,music:els.soundMusic};
+  let context = null, musicTimer = null, melodyStep = 0, lastKeyTime = -Infinity;
+  const melody = [196.00,246.94,293.66,246.94,220.00,261.63,329.63,261.63,
+    174.61,220.00,261.63,220.00,196.00,246.94,293.66,246.94];
+
+  function audioContext() {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) return null;
+    if (!context) {
+      try { context = new Audio(); } catch (_) { return null; }
+    }
+    if (context.state === "suspended") {
+      const resumed = context.resume();
+      if (resumed && typeof resumed.catch === "function") resumed.catch(() => {});
+    }
+    return context;
+  }
+  function tone(hz,seconds=.065,volume=.025,wave="sine",delay=0) {
+    const ctx = audioContext();
+    if (!ctx) return;
+    const begin = ctx.currentTime + delay;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = wave;
+    osc.frequency.setValueAtTime(hz,begin);
+    gain.gain.setValueAtTime(.0001,begin);
+    gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),begin+.012);
+    gain.gain.exponentialRampToValueAtTime(.0001,begin+seconds);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(begin);
+    osc.stop(begin+seconds+.012);
+    osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+  }
+  function key(kind="normal") {
+    if (!enabled.keys) return;
+    const now = performance.now();
+    if (now-lastKeyTime<33) return; // Avoid an unpleasant buzz on rapid mobile input.
+    lastKeyTime=now;
+    const variations = [0,12,-8,7];
+    const offset=variations[Math.floor(now/65)%variations.length];
+    if (kind==="delete") tone(225+offset,.065,.017,"triangle");
+    else if (kind==="incorrect") tone(290+offset,.067,.018,"triangle");
+    else tone(485+offset,.048,.018,"sine");
+  }
+  function button() {
+    if (!enabled.ui) return;
+    tone(585,.07,.024,"triangle");
+    tone(780,.095,.018,"sine",.045);
+  }
+  function musicNote() {
+    if (!enabled.music || document.hidden || game.screen!=="play" ||
+      !["ready","typing"].includes(game.phase)) return;
+    const index=melodyStep++%melody.length;
+    tone(melody[index],.43,.009,"sine");
+    if (index%4===0) tone(melody[index]/2,.7,.005,"triangle",.06);
+  }
+  function stopMusic() {
+    if (musicTimer!==null) clearInterval(musicTimer);
+    musicTimer=null;
+  }
+  function startMusic() {
+    stopMusic();
+    if (!enabled.music || document.hidden || game.screen!=="play" ||
+      !["ready","typing"].includes(game.phase)) return;
+    if (!audioContext()) return;
+    musicNote();
+    musicTimer=setInterval(musicNote,730);
+  }
+  function render() {
+    for (const [channel,btn] of Object.entries(buttons)) {
+      const on=enabled[channel];
+      btn.setAttribute("aria-pressed",String(on));
+      btn.classList.toggle("is-active",on);
+      const label=channel==="keys"?"Keys":channel==="ui"?"UI":"Music";
+      const icon=channel==="keys"?"⌨":channel==="ui"?"◉":"♫";
+      btn.replaceChildren();
+      btn.textContent=icon+" "+label+" "+(on?"On":"Off");
+      btn.title=(on?"Mute ":"Enable ")+(channel==="keys"?"typing sounds":channel==="ui"?"button sounds":"background music");
+    }
+  }
+  for (const [channel,btn] of Object.entries(buttons)) {
+    btn.addEventListener("click", () => {
+      enabled[channel]=!enabled[channel];
+      safeSet(AUDIO_SETTINGS,JSON.stringify(enabled));
+      if(channel==="music"){
+        if(enabled.music) startMusic(); else stopMusic();
+      }
+      if(channel==="ui" && enabled.ui) button();
+      render();
+    });
+  }
+  // All existing UI controls have soft confirmation clicks (not the actual typing field).
+  document.querySelectorAll("button").forEach(btn => {
+    if(btn.hasAttribute("data-sound-toggle")) return;
+    btn.addEventListener("click",button);
+  });
+  document.addEventListener("visibilitychange",() => {
+    if(document.hidden) stopMusic(); else startMusic();
+  });
+  render();
+  return {key,button,startMusic,stopMusic};
+})();
+
 function formatTimer(seconds) {
   const n=Math.max(0,Math.ceil(seconds));
   return String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0");
@@ -151,14 +265,14 @@ function getPrompt() {
   const list=game.mode==="quote"?QUOTES[game.language]:LINES[game.language];
   if(game.mode==="zen")return "";
   if(game.mode==="quote"){
-    const alternatives=list.filter(line=>line!==game.lastPrompt);
+    const alternatives=list.filter(line=>line.toLocaleLowerCase()!==game.lastPrompt);
     const source=alternatives.length?alternatives:list;
-    return source[Math.floor(Math.random()*source.length)];
+    return source[Math.floor(Math.random()*source.length)].toLocaleLowerCase();
   }
   // Long-enough stream for fast typists even during the two-minute test.
   let text="";
   while(text.length<2900)text+=shuffled(list).join(" ")+" ";
-  return text.trimEnd();
+  return text.trimEnd().toLocaleLowerCase();
 }
 function stopClock(){
   if(game.ticker!==null)clearInterval(game.ticker);
@@ -184,7 +298,7 @@ function startClock() {
 function countCorrect(text) {
   let count=0;
   const max=Math.min(text.length,game.prompt.length);
-  for(let i=0;i<max;i++)if(text[i]===game.prompt[i])count++;
+  for(let i=0;i<max;i++)if(text[i].toLocaleLowerCase()===game.prompt[i])count++;
   return count;
 }
 function stats(){
@@ -245,7 +359,7 @@ function refreshPrompt(oldText,newText){
   })();
   for(let i=start;i<Math.max(oldText.length,newText.length);i++){
     const span=game.spans[i];if(!span)break;
-    span.className=i>=newText.length?"char-pending":(newText[i]===game.prompt[i]?"char-correct":"char-wrong");
+    span.className=i>=newText.length?"char-pending":(newText[i].toLocaleLowerCase()===game.prompt[i]?"char-correct":"char-wrong");
   }
   const previous=game.spans[Math.min(oldText.length,game.spans.length-1)];
   if(previous)previous.classList.remove("char-caret");
@@ -295,7 +409,7 @@ function resetRound(newText=true) {
   els.input.focus({preventScroll:true});
 }
 function begin(mode=game.mode){
-  game.mode=mode;selectSettings();showScreen("play");resetRound(true);
+  game.mode=mode;selectSettings();showScreen("play");resetRound(true);sound.startMusic();
 }
 function finishRound(reason) {
   if(game.phase==="done")return;
@@ -305,7 +419,7 @@ function finishRound(reason) {
   }
   const elapsed=game.mode==="time"?Math.min(game.duration,secondsElapsed()):secondsElapsed();
   game.elapsed=Math.max(0,elapsed);
-  game.phase="done";stopClock();
+  game.phase="done";stopClock();sound.stopMusic();
   els.input.disabled=true;
   const m=stats();
   const record={
@@ -368,14 +482,20 @@ function handleInput(event) {
   if(game.phase==="ready" && value.length>0)startClock();
   const before=game.value;
   const added=readInsertions(before,value);
+  if(added.length){
+    const wrong=game.mode!=="zen" && added.some(x=>x.character.toLocaleLowerCase()!==game.prompt[x.position]);
+    sound.key(wrong?"incorrect":"normal");
+  }else if(value.length<before.length){
+    sound.key("delete");
+  }
   game.keystrokes+=added.length;
   if(game.mode!=="zen"){
-    game.mistyped+=added.filter(x=>x.character!==game.prompt[x.position]).length;
+    game.mistyped+=added.filter(x=>x.character.toLocaleLowerCase()!==game.prompt[x.position]).length;
   }
   game.value=value;
   refreshPrompt(before,value);
   updateStats();
-  if(game.mode==="quote"&&value===game.prompt&&value.length>0){
+  if(game.mode==="quote"&&value.toLocaleLowerCase()===game.prompt&&value.length>0){
     finishRound("completed");
   }else if(game.mode==="time" && value.length===game.prompt.length){
     // A complete prompt is possible for exceptionally fast typists.
@@ -416,7 +536,7 @@ function renderHistory() {
   }
 }
 function goHome(){
-  stopClock();game.phase="setup";game.startAt=null;game.elapsed=0;
+  stopClock();sound.stopMusic();game.phase="setup";game.startAt=null;game.elapsed=0;
   els.input.blur();
   selectSettings();showScreen("setup");
 }
@@ -433,8 +553,8 @@ els.start.addEventListener("click",()=>begin());
 els.home.addEventListener("click",goHome);
 els.resultHome.addEventListener("click",goHome);
 els.resultRetry.addEventListener("click",()=>begin());
-els.restart.addEventListener("click",()=>{resetRound(false);toast("Test restarted.");});
-els.newText.addEventListener("click",()=>{resetRound(true);toast("New text ready.");});
+els.restart.addEventListener("click",()=>{resetRound(false);sound.startMusic();toast("Test restarted.");});
+els.newText.addEventListener("click",()=>{resetRound(true);sound.startMusic();toast("New text ready.");});
 els.finish.addEventListener("click",()=>finishRound("manual"));
 els.input.addEventListener("input",handleInput);
 els.input.addEventListener("compositionend",handleInput);
@@ -446,7 +566,7 @@ els.input.addEventListener("keydown",event=>{
   if(event.key==="Tab")return; // Preserve keyboard navigation.
   if(event.key==="Escape"){els.input.blur();}
 });
-window.addEventListener("pagehide",stopClock);
+window.addEventListener("pagehide",()=>{stopClock();sound.stopMusic();});
 selectSettings();
 renderHistory();
 showScreen("setup");
