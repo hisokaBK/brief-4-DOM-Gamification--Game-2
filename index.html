@@ -1,61 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-
-    <script src="./index.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b101b">
+  <meta name="description" content="HisokaType is a responsive typing speed trainer with Time Attack, Quote Challenge and Zen Practice, live WPM and personal progress.">
+  <title>HisokaType — Typing Arena</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23121b30'/%3E%3Ctext x='32' y='45' text-anchor='middle' font-size='44'%3E%E2%8C%A8%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./index.js" defer></script>
 </head>
-<body> 
-        <div id="time">
-             <div>
-                <p>Choisis le moment idéal pour te challenger.</p>
-               <div onclick="hendelClickP(this)" ><p>Commence en douceur</p><p class="p1">60s</p></div>
-               <div onclick="hendelClickP(this)"><p>Le vrai défi commence</p><p  class="p1">30s</p></div>
-               <div onclick="hendelClickP(this)"><p>Seuls les meilleurs réussissent</p><p  class="p1">15s</p></div>
-               
-             </div>
-        </div>
-    <div id="txt"></div>
-    <div class="container">
-        <textarea  name="" class="typing-game" autofocus  id=""  max="100%" ></textarea>
-    </div>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="HisokaType home">
+        <span class="brand-icon" aria-hidden="true">⌨</span>
+        <span>hisoka<span>type</span><small> / typing arena</small></span>
+      </a>
+      <div class="header-right">
+        <span class="header-label"><span class="online-dot"></span>Train your typing</span>
+        <button id="home-button" class="icon-button" type="button" aria-label="Return to game modes" title="Game modes" hidden>⌂ <span>Modes</span></button>
+      </div>
+    </header>
 
-      <nav>
-        <div class="controle">
-            <div class="time">Time: <span id="scnd"></span> </div>
-            <div>Errors : <span id="error"></span></div>
-            <div>WPM : <span id="wpm"></span> <span id="totatWpm"></span> </div>
-            <div class="score">acc : <span id="acc"></span></div>
-        </div>
-    </nav>
-     <div class="finish">
-             <button onclick="hendelRePlay()">Re-Play</button>
-             <button onclick="hendelNewPlay()">New Chalenge</button>
-             <button onclick="hendelEndPlay()">Ed-Paly</button>
-     </div>
-
-     <div id="result-container">
-
-        <div class="result-box">
-             <img src="./image/Cheers Wine GIF by Visit California.gif" alt="win-lose">
-          <h2>Résultat de la partie </h2>
-          <p><strong>Caractères tapés :</strong> <span id="typedChars"></span></p>
-          <p><strong>Erreurs :</strong> <span id="errorsR"></span></p>
-          <p><strong>WPM :</strong> <span id="wpmR"></span></p>
-          <p><strong>Temps choisi :</strong> <span id="chosenTime"></span> sec</p>
-          <p><strong>Temps écoulé :</strong> <span id="lastTime"></span> sec</p>
-          <p><strong>Précision :</strong> <span id="accuracy"></span></p>
-          <div class="finish"></div><button onclick="hendelNewPlay()">New Chalenge</button></div>
+    <main class="page-container">
+      <section id="setup-screen" class="screen setup-screen" aria-labelledby="setup-title">
+        <div class="welcome">
+          <div>
+            <p class="eyebrow">THE TYPING ARENA <span class="eyebrow-line"></span> 01 / 03</p>
+            <h1 id="setup-title">Find your <span>rhythm.</span><br>Master your keyboard.</h1>
+            <p class="welcome-copy">Three ways to get faster. Test your speed, conquer a passage, or practice at your own pace.</p>
+          </div>
+          <div class="hero-graphic" aria-hidden="true">
+            <div class="hero-key key-one">W</div><div class="hero-key key-two">P</div><div class="hero-key key-three">M</div>
+            <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span>
+          </div>
         </div>
 
-     </div>
+        <div class="section-top">
+          <div><p class="eyebrow">CHOOSE YOUR CHALLENGE</p><h2>Pick a game mode</h2></div>
+          <span class="section-hint">01 — Select a mode</span>
+        </div>
+        <div class="mode-grid" role="group" aria-label="Game mode">
+          <button class="mode-card is-selected" type="button" data-mode="time" aria-pressed="true">
+            <span class="mode-card-top"><span class="mode-icon speed-icon">↗</span><span class="mode-index">01</span></span>
+            <strong>Time Attack</strong>
+            <span class="mode-description">Race the clock. See how fast and accurately you can type.</span>
+            <span class="mode-card-bottom">15 – 120 seconds <span aria-hidden="true">→</span></span>
+          </button>
+          <button class="mode-card" type="button" data-mode="quote" aria-pressed="false">
+            <span class="mode-card-top"><span class="mode-icon quote-icon">“</span><span class="mode-index">02</span></span>
+            <strong>Quote Challenge</strong>
+            <span class="mode-description">Finish a complete passage with the best possible accuracy.</span>
+            <span class="mode-card-bottom">Complete the text <span aria-hidden="true">→</span></span>
+          </button>
+          <button class="mode-card" type="button" data-mode="zen" aria-pressed="false">
+            <span class="mode-card-top"><span class="mode-icon zen-icon">∞</span><span class="mode-index">03</span></span>
+            <strong>Zen Practice</strong>
+            <span class="mode-description">Write freely. No countdown, no mistakes to worry about.</span>
+            <span class="mode-card-bottom">Unlimited practice <span aria-hidden="true">→</span></span>
+          </button>
+        </div>
 
+        <div class="config-panel">
+          <div class="config-block" id="time-config">
+            <p class="config-title">⏱ Duration <span class="config-muted">Time Attack only</span></p>
+            <div class="choice-row" role="group" aria-label="Test duration">
+              <button type="button" data-duration="15" aria-pressed="false">15s</button>
+              <button type="button" data-duration="30" aria-pressed="true" class="is-selected">30s</button>
+              <button type="button" data-duration="60" aria-pressed="false">60s</button>
+              <button type="button" data-duration="120" aria-pressed="false">120s</button>
+            </div>
+          </div>
+          <div class="config-block">
+            <p class="config-title">◉ Language <span class="config-muted">Practice texts</span></p>
+            <div class="choice-row language-row" role="group" aria-label="Typing language">
+              <button type="button" data-language="en" class="is-selected" aria-pressed="true">English</button>
+              <button type="button" data-language="fr" aria-pressed="false">Français</button>
+            </div>
+          </div>
+          <div class="config-start">
+            <button type="button" id="start-button" class="primary-button">Start typing <span aria-hidden="true">↗</span></button>
+            <span>Timer starts with your first keystroke</span>
+          </div>
+        </div>
+        <div class="section-top progress-title">
+          <div><p class="eyebrow">YOUR PROGRESS</p><h2>Recent sessions</h2></div>
+          <span class="section-hint">Stored on this device</span>
+        </div>
+        <div id="history-container" class="history-container" aria-live="polite">
+          <p class="history-empty">Complete your first challenge to start tracking your progress.</p>
+        </div>
+      </section>
+
+      <section id="play-screen" class="screen play-screen" aria-labelledby="play-title" hidden>
+        <div class="play-head">
+          <div><p class="eyebrow" id="play-kicker">TIME ATTACK</p><h1 id="play-title">Find your rhythm.</h1>
+            <p id="play-instruction" class="play-instruction">Start typing below to begin your challenge.</p></div>
+          <button type="button" id="new-text-button" class="text-button">↻ New text</button>
+        </div>
+        <div class="stats-strip" aria-label="Live performance">
+          <div class="metric"><span>WPM <small>speed</small></span><strong id="live-wpm">0</strong></div>
+          <div class="metric"><span>Accuracy <small>correct keys</small></span><strong id="live-accuracy">100<small>%</small></strong></div>
+          <div class="metric"><span>Errors <small>mistyped</small></span><strong id="live-errors">0</strong></div>
+          <div class="metric metric-accent"><span id="time-label">Time left</span><strong id="live-timer">00:30</strong></div>
+        </div>
+        <div class="test-panel">
+          <div class="test-panel-top">
+            <span id="test-mode-tag" class="test-tag">TIME ATTACK / ENGLISH</span>
+            <span id="test-state" class="test-state" role="status" aria-live="polite">Ready when you are</span>
+          </div>
+          <div id="prompt-container" class="prompt-container" aria-label="Text to type">
+            <div id="prompt-text" class="prompt-text"></div>
+          </div>
+          <div id="zen-container" class="zen-container" hidden>
+            <span class="zen-inspiration" id="zen-inspiration">Take your time. Let the words flow.</span>
+            <p>No prompt to follow. This space is yours.</p>
+          </div>
+          <div class="input-wrap">
+            <label id="typing-label" for="typing-input">YOUR INPUT <span id="typing-hint">Type the highlighted passage below</span></label>
+            <textarea id="typing-input" class="typing-input" rows="3" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" inputmode="text" placeholder="Click here or tap to start typing…" aria-describedby="play-instruction"></textarea>
+          </div>
+          <div class="progress-meta"><span id="progress-caption">0% of text</span><span id="characters-caption">0 characters</span></div>
+          <div class="progress-rail" role="progressbar" id="progress-rail" aria-label="Test progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-fill"></span></div>
+        </div>
+        <div class="play-footer">
+          <span class="footer-tip">⌨ <span id="shortcut-tip">Tip: use Backspace to correct mistakes</span></span>
+          <div class="play-actions">
+            <button type="button" id="restart-button" class="secondary-button">↻ Restart</button>
+            <button type="button" id="finish-button" class="primary-button">Finish test <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section id="results-screen" class="screen results-screen" aria-labelledby="results-title" hidden>
+        <div class="results-heading"><p class="eyebrow">SESSION COMPLETE</p><h1 id="results-title">Nice work. <span>Keep growing.</span></h1><p id="result-summary">Every session is a step forward.</p></div>
+        <div class="results-primary">
+          <div class="result-main"><p>FINAL WPM</p><strong id="result-wpm">0</strong><span id="result-rating">Keep practicing</span></div>
+          <div class="result-secondary">
+            <div><span>Accuracy</span><strong id="result-accuracy">100%</strong></div>
+            <div><span>Raw WPM</span><strong id="result-raw">0</strong></div>
+            <div><span>Mistyped keys</span><strong id="result-errors">0</strong></div>
+            <div><span>Duration</span><strong id="result-duration">0s</strong></div>
+            <div><span>Correct chars</span><strong id="result-correct">0</strong></div>
+            <div><span>Best result</span><strong id="result-best">0 WPM</strong></div>
+          </div>
+        </div>
+        <div class="results-footer">
+          <p id="result-record-note" class="record-note" aria-live="polite"></p>
+          <div class="results-actions">
+            <button type="button" id="result-home-button" class="secondary-button">All modes</button>
+            <button type="button" id="result-retry-button" class="primary-button">Try again ↻</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer"><span>hisoka<span>type</span> · Built to get better, one keystroke at a time.</span><span>Focused practice. Real progress.</span></footer>
+    <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+  </div>
 </body>
 </html>
