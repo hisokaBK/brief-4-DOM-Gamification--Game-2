@@ -112,9 +112,14 @@ const sound = (() => {
     music:saved.music !== false
   };
   const buttons = {keys:els.soundKeys,ui:els.soundUI,music:els.soundMusic};
-  let context = null, musicTimer = null, melodyStep = 0, lastKeyTime = -Infinity;
-  const melody = [196.00,246.94,293.66,246.94,220.00,261.63,329.63,261.63,
-    174.61,220.00,261.63,220.00,196.00,246.94,293.66,246.94];
+  let context = null, musicTimer = null, musicBus = null;
+  let melodyStep = 0, lastKeyTime = -Infinity;
+  // Original slow piano-style phrase in C major, rather than a fast electronic loop.
+  const pianoMelody = [
+    329.63,293.66,261.63,293.66,329.63,392.00,329.63,293.66,
+    261.63,293.66,329.63,261.63,246.94,261.63,293.66,261.63
+  ];
+  const pianoBass = [130.81,146.83,174.61,130.81];
 
   function audioContext() {
     const Audio = window.AudioContext || window.webkitAudioContext;
@@ -161,24 +166,58 @@ const sound = (() => {
     tone(585,.07,.024,"triangle");
     tone(780,.095,.018,"sine",.045);
   }
+  function pianoNote(frequency, volume=.010, delay=0) {
+    const ctx = audioContext();
+    if (!ctx || !musicBus) return;
+    const start = ctx.currentTime + delay;
+    const output = musicBus;
+    // A short hammer-like attack and decaying harmonics produce a gentle
+    // piano-inspired sound, without external audio files or copied recordings.
+    [1,2,3].forEach((harmonic,index) => {
+      const osc = ctx.createOscillator();
+      const envelope = ctx.createGain();
+      const peak = volume * [1,.24,.07][index];
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(frequency*harmonic,start);
+      envelope.gain.setValueAtTime(.0001,start);
+      envelope.gain.exponentialRampToValueAtTime(Math.max(peak,.0002),start+.024);
+      envelope.gain.exponentialRampToValueAtTime(Math.max(peak*.44,.0002),start+.23);
+      envelope.gain.exponentialRampToValueAtTime(.0001,start+1.95);
+      osc.connect(envelope);
+      envelope.connect(output);
+      osc.start(start);
+      osc.stop(start+1.97);
+      osc.onended = () => { osc.disconnect(); envelope.disconnect(); };
+    });
+  }
   function musicNote() {
     if (!enabled.music || document.hidden || game.screen!=="play" ||
-      !["ready","typing"].includes(game.phase)) return;
-    const index=melodyStep++%melody.length;
-    tone(melody[index],.43,.009,"sine");
-    if (index%4===0) tone(melody[index]/2,.7,.005,"triangle",.06);
+      !["ready","typing"].includes(game.phase) || !musicBus) return;
+    const index = melodyStep++ % pianoMelody.length;
+    pianoNote(pianoMelody[index],.010);
+    if (index%4===0) pianoNote(pianoBass[Math.floor(index/4)],.005,0.08);
   }
   function stopMusic() {
     if (musicTimer!==null) clearInterval(musicTimer);
     musicTimer=null;
+    if (musicBus) {
+      // Silence sustained notes immediately when muted or leaving a test.
+      musicBus.gain.setValueAtTime(0,musicBus.context.currentTime);
+      musicBus=null;
+    }
   }
   function startMusic() {
     stopMusic();
     if (!enabled.music || document.hidden || game.screen!=="play" ||
       !["ready","typing"].includes(game.phase)) return;
-    if (!audioContext()) return;
+    const ctx = audioContext();
+    if (!ctx) return;
+    musicBus=ctx.createGain();
+    musicBus.context=ctx;
+    musicBus.gain.setValueAtTime(.65,ctx.currentTime);
+    musicBus.connect(ctx.destination);
     musicNote();
-    musicTimer=setInterval(musicNote,730);
+    musicTimer=setInterval(musicNote,1350);
   }
   function render() {
     for (const [channel,btn] of Object.entries(buttons)) {
