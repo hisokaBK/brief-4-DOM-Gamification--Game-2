@@ -22,6 +22,7 @@ Choose **English** or **Français** before playing. All sample texts are include
 - Live **net-style WPM**, **raw WPM**, **accuracy**, elapsed/remaining time, and error indicators.
 - Session summary with performance feedback, personal best per game-mode/language/duration, and six recent results on the home screen.
 - Best scores and up to 25 recent sessions are stored in browser `localStorage` **without storing typed content**.
+- **Fair personal bests:** timed runs must finish, Quote Challenge must be completed (at least 3 seconds), and Zen practice must last at least 30 seconds with 40 or more characters. Short or manually stopped sessions still appear in history.
 - Restart current test, choose a new passage, switch modes, or manually finish without disruptive browser dialogs.
 - Pasting and dropping text into the typing field are blocked during tests.
 - No new image or audio dependencies. The old GIF remains in the repository but is not loaded by the redesigned site.
