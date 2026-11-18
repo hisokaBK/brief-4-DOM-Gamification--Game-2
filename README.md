@@ -25,6 +25,9 @@ Choose **English** or **Français** before playing. All sample texts are include
 - **Fair personal bests:** timed runs must finish, Quote Challenge must be completed (at least 3 seconds), and Zen practice must last at least 30 seconds with 40 or more characters. Short or manually stopped sessions still appear in history.
 - Restart current test, choose a new passage, switch modes, or manually finish without disruptive browser dialogs.
 - Pasting and dropping text into the typing field are blocked during tests.
+- **Lowercase prompts:** Time Attack and Quote Challenge display practice texts entirely in lowercase, including the first letter. Uppercase typed by mobile keyboards is treated as the matching lowercase character, so autocapitalization doesn't create a false mistake.
+- **Three independent sound controls** in the header: `Keys` for soft keypress/correction sounds, `UI` for button clicks, and `Music` for an original, subtle ambient loop while a test is open. Each can be muted separately, even on mobile.
+- Audio preferences persist in `localStorage`; background music stops on the results/setup screens, when the page is hidden, and when leaving the page. Music and effects are generated locally using the Web Audio API and require a user interaction to unlock playback.
 - No new image or audio dependencies. The old GIF remains in the repository but is not loaded by the redesigned site.
 
 ## Understanding the metrics
@@ -37,7 +40,7 @@ Raw WPM = (currently entered characters / 5) / elapsed minutes
 Accuracy = correctly matching characters / entered characters × 100
 ```
 
-- For Time Attack and Quote Challenge, a character is currently correct if it matches the reference at the same position. **Accuracy is updated when you correct text with Backspace**.
+- For Time Attack and Quote Challenge, a character is currently correct if it matches the reference at the same position **regardless of uppercase/lowercase**. **Accuracy is updated when you correct text with Backspace**.
 - Live **Errors** counts incorrect characters still present in the current text.
 - The result's **Mistyped keys** counts incorrect characters when they were entered, including mistakes corrected later. This value is intentionally different from the live uncorrected error count.
 - Zen Practice has no target passage, so its WPM is based on the number of entered characters and its accuracy is shown as 100% by definition.
