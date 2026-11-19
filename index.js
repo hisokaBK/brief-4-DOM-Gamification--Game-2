@@ -299,8 +299,21 @@ function shuffled(list) {
   }
   return copy;
 }
+// Keep practice prompts compatible with standard keyboards (including AZERTY/QWERTY).
+// French source sentences remain correctly accented; only playable text is simplified.
+function keyboardFriendlyText(text) {
+  return text.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[œŒ]/g,char=>char==="œ"?"oe":"OE")
+    .replace(/[æÆ]/g,char=>char==="æ"?"ae":"AE")
+    .replace(/[‘’]/g,"'")
+    .replace(/[“”]/g,'"')
+    .replace(/[–—]/g,"-")
+    .replace(/\u00a0/g," ");
+}
 function getPrompt() {
-  const list=game.mode==="quote"?QUOTES[game.language]:LINES[game.language];
+  const list=(game.mode==="quote"?QUOTES[game.language]:LINES[game.language])
+    .map(line=>keyboardFriendlyText(line).toLocaleLowerCase());
   if(game.mode==="zen")return "";
   if(game.mode==="quote"){
     const alternatives=list.filter(line=>line.toLocaleLowerCase()!==game.lastPrompt);
