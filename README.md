@@ -1,3 +1,5 @@
+![HisokaType gameplay — Quote Challenge](image/hisokatype-gameplay.webp)
+
 # ⌨️ HisokaType — Typing Arena
 
 A responsive typing speed game built in **vanilla HTML, CSS and JavaScript**, with three distinct ways to practice. The project keeps its original static architecture and does not require a backend, a framework, or an installation step.
@@ -25,10 +27,10 @@ Choose **English** or **Français** before playing. All sample texts are include
 - **Fair personal bests:** timed runs must finish, Quote Challenge must be completed (at least 3 seconds), and Zen practice must last at least 30 seconds with 40 or more characters. Short or manually stopped sessions still appear in history.
 - Restart current test, choose a new passage, switch modes, or manually finish without disruptive browser dialogs.
 - Pasting and dropping text into the typing field are blocked during tests.
-- **Lowercase prompts:** Time Attack and Quote Challenge display practice texts entirely in lowercase, including the first letter. Uppercase typed by mobile keyboards is treated as the matching lowercase character, so autocapitalization doesn't create a false mistake.
+- **Keyboard-friendly prompts:** Time Attack and Quote Challenge display all practice text in lowercase. French accents and hard-to-type typographic characters are simplified (for example, `réveille` → `reveille`, `Écris` → `ecris`, `cœur` → `coeur`) so standard keyboards can complete every passage. Uppercase input is still accepted as lowercase.
 - **Three independent sound controls** in the header: `Keys` for soft keypress/correction sounds, `UI` for button clicks, and `Music` for an original, quiet **piano-style melody** while a test is open, with a soft attack, decaying notes, and low volume. Each can be muted separately, even on mobile.
 - Audio preferences persist in `localStorage`; background music stops on the results/setup screens, when the page is hidden, and when leaving the page. Music and effects are generated locally using the Web Audio API and require a user interaction to unlock playback.
-- No new image or audio dependencies. The old GIF remains in the repository but is not loaded by the redesigned site.
+- No runtime image or audio dependencies. The gameplay screenshot documents the interface in this README; the legacy GIF remains in the repository but is not loaded by the site.
 
 ## Understanding the metrics
 
@@ -70,6 +72,7 @@ https://hisokabk.github.io/brief-4-DOM-Gamification--Game-2/
 - `index.html` — the three-screen UI, game modes and statistics.
 - `style.css` — responsive dark UI, highlighting and mobile styles.
 - `index.js` — prompts, timers, typing evaluation, storage, results and interactions.
-- `image/` — an existing GIF asset, retained but no longer used in the UI.
+- `image/hisokatype-gameplay.webp` — screenshot shown at the top of this README.
+- `image/` — also contains the legacy GIF, retained but not used in the UI.
 
-No new project files were created during the redesign.
+The gameplay screenshot is a documentation-only asset and is not loaded by the app.
