@@ -2,6 +2,8 @@
 
 # ⌨️ HisokaType — Typing Arena
 
+🎮 **Live Demo:** [Play HisokaType online](https://hisokabk.github.io/Typing_speed_game/)
+
 A responsive typing speed game built in **vanilla HTML, CSS and JavaScript**, with three distinct ways to practice. The project keeps its original static architecture and does not require a backend, a framework, or an installation step.
 
 ## Three game modes
@@ -63,9 +65,7 @@ Then visit http://localhost:8000.
 
 The site is a static app, so it can be deployed with GitHub Pages from the root of the default branch, when Pages is enabled in the repository settings.
 
-Expected URL:
-
-https://hisokabk.github.io/brief-4-DOM-Gamification--Game-2/
+**Live website:** https://hisokabk.github.io/Typing_speed_game/
 
 ## Existing files
 
